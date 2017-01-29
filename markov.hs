@@ -8,21 +8,15 @@ import qualified Data.Map as M
 data  MChain a = Map a [(String, Int)] deriving (Show)
 type Words = [String]
 
-updateOne :: String -> [(String, Int)] -> [(String, Int)]
-updateOne s  = update (s, 1)
+cw :: Words -> [(String, [(String, Int)] )]
+cw [] = []
+cw (x:y:[]) = [(x, [(y, 1)])]
+cw (w:w':ws) = (w, [(w', 1)]):cw (w':ws)
+cw _         = []
 
-update :: (String, Int)  -> [(String, Int)] -> [(String, Int)]
-update (s, n )  [] = [(s, n)]
-update (s, n) (h@(s', n'):xs)
-    | s == s' = (s', n' + n) : xs
-    | otherwise = h : update (s, n) xs
-
-merge :: [(String, Int)] -> [(String, Int)] -> [(String, Int)]
-merge = foldr update
-
-
-chainWords :: Words ->  MChain String
-chainWords = undefined
+chainWords :: Words -> M.Map String [(String, Int)]
+chainWords wds = M.fromListWith (f . (++)) (cw wds) where f = id
+-- f will combine duplicate tuples ie [("x", 1), ("x",3)] -> [("x", 4)]
 
 main :: IO ()
 main = do
