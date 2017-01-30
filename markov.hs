@@ -31,19 +31,18 @@ condense = sortBy (comparing (Down . snd))  . M.toList . M.fromListWith (+)
 
 chainWords :: Words -> M.Map String [Link String]
 chainWords = M.fromListWith merge . links 
---("so",[("much.",4),("nice.",3), ("sad",3), ("little", 2), ("dear", 1)])
+
 select :: Int -> [Link String] -> String
-select i  ((w, c) :ls)= selected i c ((w, c) :ls) where
-    selected i ix ((w, c) :ls)
-        | i <= ix = w
-        | otherwise = selected i (ix + c) ls
+select _ [] = "" -- won't happen... :)
+select i ((w, n ):ls)
+    | i <= n = w
+    | otherwise = select (i - n) ls
 
 randomN :: Int -> Randm Int
 randomN n  = getRandomR (1, n)
 
 upperBound :: [Link a] -> Int
 upperBound =foldr (\x a -> a + snd x) 0 
--- upperBound ls =foldr (\x a -> a + snd x) 0 ls
 
 main :: IO ()
 main = do
